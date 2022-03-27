@@ -73,10 +73,8 @@
 # %%
 import pandas as pd
 import numpy as np
-import sklearn
 import plotly.express as px
 import plotly.graph_objects as go
-import os
 
 # %%
 pd.options.mode.chained_assignment = None
@@ -216,7 +214,6 @@ df.to_csv(p / 'merged.csv')
 
 # %%
 from sklearn.cluster import KMeans
-from sklearn.datasets import make_blobs
 from yellowbrick.cluster import KElbowVisualizer
 from yellowbrick.cluster import InterclusterDistance
 
