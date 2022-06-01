@@ -73,8 +73,10 @@
 # %%
 import pandas as pd
 import numpy as np
+import sklearn
 import plotly.express as px
 import plotly.graph_objects as go
+import os
 
 # %%
 pd.options.mode.chained_assignment = None
@@ -214,6 +216,7 @@ df.to_csv(p / 'merged.csv')
 
 # %%
 from sklearn.cluster import KMeans
+from sklearn.datasets import make_blobs
 from yellowbrick.cluster import KElbowVisualizer
 from yellowbrick.cluster import InterclusterDistance
 
@@ -513,6 +516,12 @@ data = data.drop(['CO2'], axis=1)
 train_data, train_label = data[data.index < '2017-10-24'], label[label.index < '2017-10-24']
 train_data.head()
 
+# %%
+# Transform data: one hot encoding, min max scaling
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.compose import ColumnTransformer
+
 one_hot_encoder = OneHotEncoder(handle_unknown="ignore", sparse=False)
 
 ct = ColumnTransformer(
@@ -524,6 +533,13 @@ ct = ColumnTransformer(
 
 transformed_train_data = ct.fit_transform(train_data)
 transformed_train_data.shape
+
+# %%
+# Cross validation
+from sklearn.model_selection import cross_validate
+from sklearn.model_selection import TimeSeriesSplit
+from sklearn.linear_model import Ridge
+from scipy import stats
 
 model = Ridge()
 
@@ -580,6 +596,11 @@ X_test = fs.transform(transformed_data)
 
 X_selected.shape
 
+# %%
+# Cross validation
+from sklearn.model_selection import cross_validate
+from scipy import stats
+
 model = Ridge()
 
 ts_cv = TimeSeriesSplit(n_splits=20, test_size=48)
@@ -611,6 +632,10 @@ clf = linear_model.Lasso(alpha=0.5).fit(transformed_train_data, train_label)
 fs = SelectFromModel(clf, prefit=True)
 X_selected = fs.transform(transformed_train_data)
 X_test = fs.transform(transformed_data)
+
+# %%
+from sklearn.model_selection import cross_validate
+from scipy import stats
 
 model = Ridge()
 
